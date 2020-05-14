@@ -1,23 +1,27 @@
-def text(): #读取存储积分文件生成列表
+import time, datetime, os
+
+def text():
+    '''
+    #读取存储积分文件生成列表
+    '''
     try:
         file = open('jifen.txt','r')
     except IOError:
         error = []
         return error
     content = file.readlines()
-
     for i in range(len(content)):
         content[i] = content[i][:len(content[i])-1]
-
     file.close()
     return content
 
-def jf(userid): #主函数
-    jfreset()
+def jf(userid):
+    '''
+    #主函数
+    '''
     alreadysign=[userid, '今天已经签到过了哦！']
     with open("jfreset.txt", "r") as fs:
         datars = fs.read()
-
     with open("jifen.txt", "r") as f:
         data = f.read()
     if userid not in datars:
@@ -36,7 +40,6 @@ def jf(userid): #主函数
                             pass
                     with open("jfreset.txt", "a") as fs:
                         fs.write(userid+'\n')
-
         else:
             with open("jifen.txt", "a") as f:
                 listA = [userid, '1']
@@ -49,17 +52,31 @@ def jf(userid): #主函数
         return alreadysign
     return listA
 
-def jfreset(): #每天0点重置可用签到次数
-    import time,datetime,os
-    day_time=int(time.time())
-    dateArray = datetime.datetime.fromtimestamp(day_time).hour
-    if dateArray ==0:
-        path = 'jfreset.txt'
-        if os.path.exists(path):
-            os.remove(path)
-            os.mknod("jfreset.txt")
-        else:
-            os.mknod("jfreset.txt")
+def timer(h=0, m=0):
+    '''
+    计时器 判断是否0点
+    '''
+    while True:
+        while True:
+            now = datetime.datetime.now()
+            if now.hour==h and now.minute==m:
+                break
+            time.sleep(20)
+        jfreset()
+
+def jfreset():
+    '''
+    #每天0点重置可用签到次数
+    '''
+    path = 'jfreset.txt'
+    print('0点重置签到次数了')
+    if os.path.exists(path):
+        os.remove(path)
+        os.mknod("jfreset.txt")
+    else:
+        os.mknod("jfreset.txt")
+    time.sleep(60)
     pass
 
 jf('userid')
+timer()
